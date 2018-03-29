@@ -1,0 +1,78 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<project name="module_brickbreaker" default="compile.module.brickbreaker">
+  <dirname property="module.brickbreaker.basedir" file="${ant.file.module_brickbreaker}"/>
+  
+  <property name="module.jdk.home.brickbreaker" value="${project.jdk.home}"/>
+  <property name="module.jdk.bin.brickbreaker" value="${project.jdk.bin}"/>
+  <property name="module.jdk.classpath.brickbreaker" value="${project.jdk.classpath}"/>
+  
+  <property name="compiler.args.brickbreaker" value="-encoding UTF-8 -source 1.8 -target 1.8 ${compiler.args}"/>
+  
+  <property name="brickbreaker.output.dir" value="${module.brickbreaker.basedir}/out/production/BrickBreaker"/>
+  <property name="brickbreaker.testoutput.dir" value="${module.brickbreaker.basedir}/out/test/BrickBreaker"/>
+  
+  <path id="brickbreaker.module.bootclasspath">
+    <!-- Paths to be included in compilation bootclasspath -->
+  </path>
+  
+  <path id="brickbreaker.module.production.classpath">
+    <path refid="${module.jdk.classpath.brickbreaker}"/>
+  </path>
+  
+  <path id="brickbreaker.runtime.production.module.classpath">
+    <pathelement location="${brickbreaker.output.dir}"/>
+  </path>
+  
+  <path id="brickbreaker.module.classpath">
+    <path refid="${module.jdk.classpath.brickbreaker}"/>
+    <pathelement location="${brickbreaker.output.dir}"/>
+  </path>
+  
+  <path id="brickbreaker.runtime.module.classpath">
+    <pathelement location="${brickbreaker.testoutput.dir}"/>
+    <pathelement location="${brickbreaker.output.dir}"/>
+  </path>
+  
+  
+  <patternset id="excluded.from.module.brickbreaker">
+    <patternset refid="ignored.files"/>
+  </patternset>
+  
+  <patternset id="excluded.from.compilation.brickbreaker">
+    <patternset refid="excluded.from.module.brickbreaker"/>
+  </patternset>
+  
+  <path id="brickbreaker.module.sourcepath">
+    <dirset dir="${module.brickbreaker.basedir}">
+      <include name="src"/>
+    </dirset>
+  </path>
+  
+  
+  <target name="compile.module.brickbreaker" depends="compile.module.brickbreaker.production,compile.module.brickbreaker.tests" description="Compile module BrickBreaker"/>
+  
+  <target name="compile.module.brickbreaker.production" depends="register.custom.compilers" description="Compile module BrickBreaker; production classes">
+    <mkdir dir="${brickbreaker.output.dir}"/>
+    <javac2 destdir="${brickbreaker.output.dir}" debug="${compiler.debug}" nowarn="${compiler.generate.no.warnings}" memorymaximumsize="${compiler.max.memory}" fork="true" executable="${module.jdk.bin.brickbreaker}/javac">
+      <compilerarg line="${compiler.args.brickbreaker}"/>
+      <bootclasspath refid="brickbreaker.module.bootclasspath"/>
+      <classpath refid="brickbreaker.module.production.classpath"/>
+      <src refid="brickbreaker.module.sourcepath"/>
+      <patternset refid="excluded.from.compilation.brickbreaker"/>
+    </javac2>
+    
+    <copy todir="${brickbreaker.output.dir}">
+      <fileset dir="${module.brickbreaker.basedir}/src">
+        <patternset refid="compiler.resources"/>
+        <type type="file"/>
+      </fileset>
+    </copy>
+  </target>
+  
+  <target name="compile.module.brickbreaker.tests" depends="register.custom.compilers,compile.module.brickbreaker.production" description="compile module BrickBreaker; test classes" unless="skip.tests"/>
+  
+  <target name="clean.module.brickbreaker" description="cleanup module">
+    <delete dir="${brickbreaker.output.dir}"/>
+    <delete dir="${brickbreaker.testoutput.dir}"/>
+  </target>
+</project>
